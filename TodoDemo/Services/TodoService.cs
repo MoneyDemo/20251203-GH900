@@ -14,6 +14,11 @@ public class TodoService
     
     private static int _nextId = 4;
     
+    private TodoItem? GetByIdUnsafe(int id)
+    {
+        return _todoItems.FirstOrDefault(t => t.Id == id);
+    }
+    
     public List<TodoItem> GetAll()
     {
         lock (_lock)
@@ -26,7 +31,7 @@ public class TodoService
     {
         lock (_lock)
         {
-            return _todoItems.FirstOrDefault(t => t.Id == id);
+            return GetByIdUnsafe(id);
         }
     }
     
@@ -44,7 +49,7 @@ public class TodoService
     {
         lock (_lock)
         {
-            var existingItem = _todoItems.FirstOrDefault(t => t.Id == item.Id);
+            var existingItem = GetByIdUnsafe(item.Id);
             if (existingItem == null) return false;
             
             existingItem.Title = item.Title;
@@ -59,7 +64,7 @@ public class TodoService
     {
         lock (_lock)
         {
-            var item = _todoItems.FirstOrDefault(t => t.Id == id);
+            var item = GetByIdUnsafe(id);
             if (item == null) return false;
             
             _todoItems.Remove(item);
@@ -71,7 +76,7 @@ public class TodoService
     {
         lock (_lock)
         {
-            var item = _todoItems.FirstOrDefault(t => t.Id == id);
+            var item = GetByIdUnsafe(id);
             if (item == null) return false;
             
             item.IsCompleted = !item.IsCompleted;

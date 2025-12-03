@@ -1,0 +1,109 @@
+@model List<TodoDemo.Models.TodoItem>
+
+@{
+    ViewData["Title"] = "TODO List";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">
+            <i class="bi bi-list-check"></i> TODO List
+        </h1>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="mb-3">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Add New TODO
+            </a>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-info">
+                <h4>No TODO items found</h4>
+                <p>Get started by creating your first TODO item!</p>
+            </div>
+        }
+        else
+        {
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Created Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr class="@(item.IsCompleted ? "table-success" : "")">
+                                        <td>
+                                            <form asp-action="ToggleComplete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm @(item.IsCompleted ? "btn-success" : "btn-outline-secondary")" title="@(item.IsCompleted ? "Mark as incomplete" : "Mark as complete")">
+                                                    @if (item.IsCompleted)
+                                                    {
+                                                        <i class="bi bi-check-circle-fill"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-circle"></i>
+                                                    }
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <span class="@(item.IsCompleted ? "text-decoration-line-through text-muted" : "")">
+                                                @item.Title
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="@(item.IsCompleted ? "text-decoration-line-through text-muted" : "")">
+                                                @(string.IsNullOrEmpty(item.Description) ? "-" : item.Description)
+                                            </span>
+                                        </td>
+                                        <td>@item.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="View Details">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <p class="text-muted">
+                    Total: @Model.Count items | 
+                    Completed: @Model.Count(t => t.IsCompleted) | 
+                    Pending: @Model.Count(t => !t.IsCompleted)
+                </p>
+            </div>
+        }
+    </div>
+</div>

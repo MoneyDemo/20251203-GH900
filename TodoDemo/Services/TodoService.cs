@@ -4,7 +4,7 @@ namespace TodoDemo.Services;
 
 public class TodoService
 {
-    private static List<TodoItem> _todoItems = new()
+    private static readonly List<TodoItem> _todoItems = new()
     {
         new TodoItem { Id = 1, Title = "Welcome to TODO Demo", Description = "This is a sample TODO item", IsCompleted = false, CreatedDate = DateTime.Now.AddDays(-1) },
         new TodoItem { Id = 2, Title = "Complete the tutorial", Description = "Follow the steps to understand the app", IsCompleted = false, CreatedDate = DateTime.Now.AddDays(-1) },
